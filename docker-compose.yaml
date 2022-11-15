@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+  localstack:
+    image: localstack/localstack:1.1.0
+    ports:
+      - "53:53"
+      - "443:443"
+      - "4510-4520:4510-4520"
+      - "4566-4620:4566-4620"
+      - "${PORT_WEB_UI-8080}:${PORT_WEB_UI-8080}"
+    environment:
+      - LOCALSTACK_API_KEY=${LOCALSTACK_API_KEY}
+      - HOSTNAME_EXTERNAL=localstack
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - LAMBDA_EXECUTOR=local
+      - LAMBDA_DOCKER_NETWORK=host
+      - LAMBDA_REMOTE_DOCKER=true
+      - HOST_TMP_FOLDER=
+      - LAMBDA_CODE_EXTRACT_TIME=50
+      - LAMBDA_XRAY_INIT=1
+      - LOCALSTACK_HOSTNAME=127.0.0.1
+      - LAMBDA_DOCKER_DNS=8.8.8.8
+      - DNS_ADDRESS=0
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./localSetup.sh:/docker-entrypoint-initaws.d/localSetup.sh"
+    tmpfs:
+      - /tmp/localstack:exec,mode=600
